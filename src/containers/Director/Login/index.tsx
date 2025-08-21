@@ -1,13 +1,9 @@
 import { Box } from '@mui/material'
 import LoginBox from '../../../components/Director/LoginBox'
-
-interface AuthError {
-  message: string
-  code?: string
-}
+import { AuthError, LoginCredentials } from '../../../types/auth'
 
 interface Props { 
-  onLogin: (credentials?: { username: string; password: string }) => Promise<void>
+  onLogin: (credentials: LoginCredentials) => Promise<void>
   authError: AuthError | null
   onClearAuthError: () => void
 }

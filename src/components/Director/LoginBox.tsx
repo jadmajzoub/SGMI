@@ -9,14 +9,10 @@ import FormContainer from '../common/FormContainer'
 import FormField from '../common/FormField'
 import SubmitButton from '../common/SubmitButton'
 import { loginFormSchema, LoginFormData } from '../../schemas/productionValidation'
-
-interface AuthError {
-  message: string
-  code?: string
-}
+import { AuthError, LoginCredentials } from '../../types/auth'
 
 interface Props { 
-  onLogin: (credentials?: { username: string; password: string }) => Promise<void>
+  onLogin: (credentials: LoginCredentials) => Promise<void>
   authError: AuthError | null
   onClearAuthError: () => void
 }

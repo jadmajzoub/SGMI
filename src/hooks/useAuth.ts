@@ -1,38 +1,96 @@
-import { useCallback, useMemo, useState } from 'react'
-
-interface AuthError {
-  message: string
-  code?: string
-}
+import { useCallback, useMemo, useState, useEffect } from 'react'
+import { AuthState, LoginCredentials, AuthError, AuthUser, AuthToken } from '../types/auth'
+import { authStorage, tokenStorage, userStorage, createMockToken, createMockUser } from '../utils/auth'
 
 export function useAuth() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [authState, setAuthState] = useState<AuthState>({
+    user: null,
+    token: null,
+    isAuthenticated: false,
+    isLoading: true
+  })
   const [authError, setAuthError] = useState<AuthError | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
 
-  const login = useCallback(async (credentials?: { username: string; password: string }) => {
+  useEffect(() => {
+    const initializeAuth = () => {
+      try {
+        const storedToken = tokenStorage.getToken()
+        const storedUser = userStorage.getUser()
+        
+        if (storedToken && storedUser && tokenStorage.isTokenValid(storedToken)) {
+          setAuthState({
+            user: storedUser,
+            token: storedToken,
+            isAuthenticated: true,
+            isLoading: false
+          })
+        } else {
+          authStorage.clear()
+          setAuthState({
+            user: null,
+            token: null,
+            isAuthenticated: false,
+            isLoading: false
+          })
+        }
+      } catch (error) {
+        console.error('Erro ao inicializar autenticação:', error)
+        authStorage.clear()
+        setAuthState({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          isLoading: false
+        })
+      }
+    }
+
+    initializeAuth()
+  }, [])
+
+  const login = useCallback(async (credentials?: LoginCredentials) => {
     try {
-      setIsLoading(true)
+      setAuthState(prev => ({ ...prev, isLoading: true }))
       setAuthError(null)
+      
+      if (!credentials?.username || !credentials?.password) {
+        throw new Error('Credenciais inválidas')
+      }
       
       await new Promise(resolve => setTimeout(resolve, 800))
       
-      setIsAuthenticated(true)
+      const mockUser = createMockUser(credentials.username)
+      const mockToken = createMockToken(credentials.username)
+      
+      tokenStorage.saveToken(mockToken)
+      userStorage.saveUser(mockUser)
+      
+      setAuthState({
+        user: mockUser,
+        token: mockToken,
+        isAuthenticated: true,
+        isLoading: false
+      })
     } catch (error) {
       const authError: AuthError = {
         message: error instanceof Error ? error.message : 'Falha na autenticação',
         code: 'AUTH_ERROR'
       }
       setAuthError(authError)
+      setAuthState(prev => ({ ...prev, isLoading: false }))
       console.error('Authentication error:', authError)
-    } finally {
-      setIsLoading(false)
     }
   }, [])
 
   const logout = useCallback(() => {
     try {
-      setIsAuthenticated(false)
+      authStorage.clear()
+      setAuthState({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        isLoading: false
+      })
       setAuthError(null)
     } catch (error) {
       console.error('Logout error:', error)
@@ -43,12 +101,45 @@ export function useAuth() {
     setAuthError(null)
   }, [])
 
+  const refreshToken = useCallback(async () => {
+    try {
+      const currentToken = authState.token
+      const currentUser = authState.user
+      
+      if (!currentToken || !currentUser) {
+        logout()
+        return false
+      }
+      
+      if (tokenStorage.isTokenValid(currentToken)) {
+        return true
+      }
+      
+      const newToken = createMockToken(currentUser.username)
+      tokenStorage.saveToken(newToken)
+      
+      setAuthState(prev => ({
+        ...prev,
+        token: newToken
+      }))
+      
+      return true
+    } catch (error) {
+      console.error('Erro ao renovar token:', error)
+      logout()
+      return false
+    }
+  }, [authState.token, authState.user, logout])
+
   return useMemo(() => ({ 
-    isAuthenticated, 
+    isAuthenticated: authState.isAuthenticated,
+    user: authState.user,
+    token: authState.token,
     authError, 
-    isLoading, 
+    isLoading: authState.isLoading, 
     login, 
     logout, 
-    clearError 
-  }), [isAuthenticated, authError, isLoading, login, logout, clearError])
+    clearError,
+    refreshToken
+  }), [authState, authError, login, logout, clearError, refreshToken])
 }

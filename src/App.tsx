@@ -1,11 +1,14 @@
 import { BrowserRouter } from 'react-router-dom'
 import AppRoutes from './routes/AppRoutes'
 import { useAuth } from './hooks/useAuth'
+import { useTokenRefresh } from './hooks/useTokenRefresh'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import ErrorFallback from './components/common/ErrorFallback'
 
 export default function App() {
-  const { isAuthenticated, authError, login, clearError } = useAuth()
+  const { isAuthenticated, authError, login, clearError, isLoading } = useAuth()
+  
+  useTokenRefresh()
   
   const handleError = (error: Error, errorInfo: string) => {
     console.error('Application error:', error, errorInfo)
