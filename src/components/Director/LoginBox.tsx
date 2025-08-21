@@ -1,8 +1,12 @@
-import { Paper, Typography, TextField, Button, Link, Stack, Alert } from '@mui/material'
+import { Typography, Link, Stack } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { delay } from '@utils/delay'
-import { DIMENSIONS, SPACING } from '../../constants/theme'
+import { DIMENSIONS } from '../../constants/theme'
+import FormContainer from '../common/FormContainer'
+import FormField from '../common/FormField'
+import SubmitButton from '../common/SubmitButton'
+import useFormState from '../../hooks/useFormState'
 
 interface AuthError {
   message: string
@@ -15,69 +19,92 @@ interface Props {
   onClearAuthError: () => void
 }
 
+const INITIAL_VALUES = {
+  username: '',
+  password: ''
+}
+
+const LOGIN_LOADING_TEXT = 'Entrando...'
+
 export default function LoginBox({ onLogin, authError, onClearAuthError }: Props) {
   const navigate = useNavigate()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-
-  useEffect(() => {
-    if (username || password) {
-      onClearAuthError()
-    }
-  }, [username, password, onClearAuthError])
-
-  const handleLoginClick = async () => {
-    try {
-      setIsLoading(true)
+  
+  const {
+    values,
+    isLoading,
+    setValue,
+    handleSubmit,
+    isFormValid
+  } = useFormState({
+    initialValues: INITIAL_VALUES,
+    onSubmit: async (formValues) => {
+      const { username, password } = formValues
       await onLogin({ username, password })
       await delay(DIMENSIONS.DELAY_LOGIN_MS)
       navigate('/loading')
-    } catch (error) {
-      console.error('Login failed:', error)
-    } finally {
-      setIsLoading(false)
     }
-  }
+  })
+
+  useEffect(() => {
+    if (values.username || values.password) {
+      onClearAuthError()
+    }
+  }, [values.username, values.password, onClearAuthError])
+
+  const hasAuthError = !!authError
+  const isLoginFormValid = values.username && values.password
 
   return (
-    <Paper sx={{ width: DIMENSIONS.LOGIN_BOX_WIDTH, p: SPACING.PAPER_PADDING, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+    <FormContainer
+      title=""
+      error={authError}
+      onClearError={onClearAuthError}
+      sx={{ 
+        width: DIMENSIONS.LOGIN_BOX_WIDTH, 
+        textAlign: 'center', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        gap: 1.5 
+      }}
+    >
       <Typography variant="h6" fontWeight={700}>ENTRAR</Typography>
       <Typography variant="body2" color="text.secondary">Bem-vindo ao SGMI</Typography>
 
       <Stack gap={1.5} mt={1}>
-        {authError && (
-          <Alert severity="error" sx={{ textAlign: 'left' }}>
-            {authError.message}
-          </Alert>
-        )}
-        <TextField 
-          size="small" 
-          placeholder="Nome de usuário" 
-          fullWidth 
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          error={!!authError}
+        <FormField
+          size="small"
+          placeholder="Nome de usuário"
+          value={values.username || ''}
+          onChange={(value) => setValue('username', value)}
+          hasError={hasAuthError}
+          onClearError={onClearAuthError}
+          disabled={isLoading}
         />
-        <TextField 
-          size="small" 
-          placeholder="Senha" 
-          type="password" 
-          fullWidth 
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          error={!!authError}
+        
+        <FormField
+          size="small"
+          placeholder="Senha"
+          type="password"
+          value={values.password || ''}
+          onChange={(value) => setValue('password', value)}
+          hasError={hasAuthError}
+          onClearError={onClearAuthError}
+          disabled={isLoading}
         />
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={handleLoginClick}
-          disabled={isLoading || !username || !password}
+        
+        <SubmitButton
+          isLoading={isLoading}
+          loadingText={LOGIN_LOADING_TEXT}
+          isFormValid={isLoginFormValid}
+          onClick={handleSubmit}
         >
-          {isLoading ? 'Entrando...' : 'Entrar'}
-        </Button>
-        <Link href="#" underline="hover" variant="body2">Esqueceu sua senha?</Link>
+          Entrar
+        </SubmitButton>
+        
+        <Link href="#" underline="hover" variant="body2">
+          Esqueceu sua senha?
+        </Link>
       </Stack>
-    </Paper>
+    </FormContainer>
   )
 }
