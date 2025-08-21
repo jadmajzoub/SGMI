@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import LoginBox from '../../../components/Diretor/LoginBox'
+import LoginBox from '../../../components/Director/LoginBox'
 
 interface Props { onLogin: () => void }
 
