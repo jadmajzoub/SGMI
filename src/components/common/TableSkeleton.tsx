@@ -7,8 +7,7 @@ import {
   TableHead, 
   TableRow, 
   Typography, 
-  Skeleton,
-  Box
+  Skeleton
 } from '@mui/material'
 
 interface Column {
@@ -34,7 +33,7 @@ export default function TableSkeleton({
   return (
     <TableContainer component={Paper} sx={{ minWidth }}>
       <Typography variant="h6" fontWeight={700} p={2}>
-        <Skeleton width="60%" />
+        {title}
       </Typography>
       <Table>
         <TableHead>

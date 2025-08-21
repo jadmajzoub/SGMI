@@ -21,7 +21,7 @@ export default function ProductionForm() {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isValid }
+    formState: { isValid }
   } = useForm<ProductionEntryFormData>({
     resolver: zodResolver(productionEntryFormSchema),
     defaultValues: {

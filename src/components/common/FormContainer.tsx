@@ -1,4 +1,4 @@
-import { Paper, Typography, Stack, Alert, Box, PaperProps } from '@mui/material'
+import { Paper, Typography, Stack, Alert, PaperProps } from '@mui/material'
 import { SPACING } from '../../constants/theme'
 
 interface FormError {

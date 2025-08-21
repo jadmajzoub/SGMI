@@ -26,7 +26,7 @@ export default function LoginBox({ onLogin, authError, onClearAuthError }: Props
     control,
     handleSubmit,
     watch,
-    formState: { errors, isValid, isSubmitting }
+    formState: { isValid, isSubmitting }
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {

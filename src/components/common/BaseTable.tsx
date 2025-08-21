@@ -1,7 +1,6 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, Box } from '@mui/material'
 import { ReactNode } from 'react'
 import TableSkeleton from './TableSkeleton'
-import LoadingSpinner from './LoadingSpinner'
 
 interface Column {
   key: string

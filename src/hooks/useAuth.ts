@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState, useEffect } from 'react'
-import { AuthState, LoginCredentials, AuthError, AuthUser, AuthToken } from '../types/auth'
+import { AuthState, LoginCredentials, AuthError } from '../types/auth'
 import { authStorage, tokenStorage, userStorage, createMockToken, createMockUser } from '../utils/auth'
 
 export function useAuth() {

@@ -4,6 +4,7 @@ import { useAuth } from './hooks/useAuth'
 import { useTokenRefresh } from './hooks/useTokenRefresh'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import ErrorFallback from './components/common/ErrorFallback'
+import LoadingOverlay from './components/common/LoadingOverlay'
 
 export default function App() {
   const { isAuthenticated, authError, login, clearError, isLoading } = useAuth()
@@ -27,6 +28,10 @@ export default function App() {
           onClearAuthError={clearError}
         />
       </BrowserRouter>
+      <LoadingOverlay 
+        open={isLoading} 
+        text="Inicializando aplicação..." 
+      />
     </ErrorBoundary>
   )
 }
