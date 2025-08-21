@@ -1,7 +1,7 @@
-import { Box, Button, Stack, Typography } from '@mui/material'
-import { Building2, Package, FileText, Calculator } from 'lucide-react'
-import { MenuItem, MenuItemConfig } from '../../types/production'
-import { THEME_COLORS, DIMENSIONS, SPACING } from '../../constants/theme'
+import { Box, Button, Stack, Typography } from '@mui/material';
+import { Building2, Calculator, FileText, Package } from 'lucide-react';
+import { DIMENSIONS, SPACING, THEME_COLORS } from '../../constants/theme';
+import { MenuItem, MenuItemConfig } from '../../types/production';
 
 interface Props {
   activeMenuItem: MenuItem
@@ -9,9 +9,9 @@ interface Props {
 }
 
 const MENU_ITEMS: MenuItemConfig[] = [
-  { key: 'production-entry', label: 'Production Entry', icon: Package },
-  { key: 'report', label: 'Production Report', icon: FileText },
-  { key: 'total', label: 'Total to Produce', icon: Calculator },
+  { key: 'production-entry', label: 'Entrada de Produção', icon: Package },
+  { key: 'report', label: 'Relatórios', icon: FileText },
+  { key: 'total', label: 'Total à Produzir', icon: Calculator },
 ]
 
 export default function Sidebar({ activeMenuItem, onMenuItemClick }: Props) {
@@ -22,7 +22,7 @@ export default function Sidebar({ activeMenuItem, onMenuItemClick }: Props) {
     }}>
       <Stack gap={3}>
         <Typography sx={{ fontSize: 18, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Building2 size={20} /> Director Area
+          <Building2 size={20} /> Área do Diretor
         </Typography>
         <Stack gap={1}>
           {MENU_ITEMS.map(({ key, label, icon: Icon }) => {
