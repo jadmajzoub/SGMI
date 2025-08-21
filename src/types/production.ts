@@ -16,7 +16,7 @@ export interface ProductionTotal {
   totalKg: number
 }
 
-export type MenuItem = 'production-entry' | 'report' | 'total'
+export type MenuItem = 'production-entry' | 'production-report'
 
 export interface MenuItemConfig {
   key: MenuItem

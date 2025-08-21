@@ -1,5 +1,5 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
-import { Building2, Calculator, FileText, Package } from 'lucide-react';
+import { Building2, FileText, Package } from 'lucide-react';
 import { DIMENSIONS, SPACING, THEME_COLORS } from '../../constants/theme';
 import { MenuItem, MenuItemConfig } from '../../types/production';
 
@@ -10,8 +10,7 @@ interface Props {
 
 const MENU_ITEMS: MenuItemConfig[] = [
   { key: 'production-entry', label: 'Entrada de Produção', icon: Package },
-  { key: 'report', label: 'Relatórios', icon: FileText },
-  { key: 'total', label: 'Total à Produzir', icon: Calculator },
+  { key: 'production-report', label: 'Relatório de Produção', icon: FileText },
 ]
 
 export default function Sidebar({ activeMenuItem, onMenuItemClick }: Props) {

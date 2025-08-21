@@ -1,12 +1,12 @@
-import { TableCell, TableRow, Alert, Box } from '@mui/material'
-import BaseTable from '../common/BaseTable'
-import { ProductionTotal } from '../../types/production'
+import { Alert, Box, TableCell, TableRow } from '@mui/material'
 import useDataFetching from '../../hooks/useDataFetching'
+import { ProductionTotal } from '../../types/production'
+import BaseTable from '../common/BaseTable'
 
 const PRODUCTION_TOTAL_DATA: ProductionTotal[] = [
-  { product: 'Mash Cup Vegetables', totalKg: 1230 },
-  { product: 'Mash Cup Cheese', totalKg: 860 },
-  { product: 'Mash Cup Meat', totalKg: 945 },
+  { product: 'Doritos', totalKg: 1230 },
+  { product: 'Fandangos', totalKg: 860 },
+  { product: 'Baconzitos', totalKg: 945 },
 ]
 
 const TOTAL_COLUMNS = [

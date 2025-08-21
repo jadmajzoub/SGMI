@@ -1,12 +1,12 @@
-import { Box, Fade, Slide } from '@mui/material'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { ProductionEntry } from '../../types/production'
-import FormContainer from '../common/FormContainer'
-import FormField from '../common/FormField'
-import SubmitButton from '../common/SubmitButton'
-import { productionEntryFormSchema, ProductionEntryFormData } from '../../schemas/productionValidation'
-import { useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Box, Fade, Slide } from '@mui/material';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { ProductionEntryFormData, productionEntryFormSchema } from '../../schemas/productionValidation';
+import { ProductionEntry } from '../../types/production';
+import FormContainer from '../common/FormContainer';
+import FormField from '../common/FormField';
+import SubmitButton from '../common/SubmitButton';
 
 const SUCCESS_MESSAGE = 'Entrada de produção salva com sucesso!'
 const LOADING_TEXT = 'Salvando entrada...'
@@ -87,7 +87,7 @@ export default function ProductionForm() {
                 render={({ field, fieldState }) => (
                   <FormField
                     label="Nome do Produto"
-                    placeholder="Ex: Mash Cup Vegetables"
+                    placeholder="Ex: Doritos"
                     value={field.value}
                     onChange={field.onChange}
                     hasError={!!fieldState.error}

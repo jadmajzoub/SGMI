@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import Sidebar from '../../../components/Director/Sidebar'
-import ProductionForm from '../../../components/Director/ProductionForm'
-import ReportTable from '../../../components/Director/ReportTable'
-import TotalTable from '../../../components/Director/TotalTable'
+import ProductionEntryScreen from '../../../components/Director/ProductionEntryScreen'
+import ProductionReportScreen from '../../../components/Director/ProductionReportScreen'
 import ErrorBoundary from '../../../components/common/ErrorBoundary'
 import ErrorFallback from '../../../components/common/ErrorFallback'
 import { Box } from '@mui/material'
@@ -15,13 +14,11 @@ export default function ProductionEntryPage() {
   const renderContent = () => {
     switch (activeMenuItem) {
       case 'production-entry':
-        return <ProductionForm />
-      case 'report':
-        return <ReportTable />
-      case 'total':
-        return <TotalTable />
+        return <ProductionEntryScreen />
+      case 'production-report':
+        return <ProductionReportScreen />
       default:
-        return <ProductionForm />
+        return <ProductionEntryScreen />
     }
   }
 

@@ -1,13 +1,13 @@
-import { TableCell, TableRow, Alert, Box } from '@mui/material'
-import BaseTable from '../common/BaseTable'
-import { ProductionReport } from '../../types/production'
-import useDataFetching from '../../hooks/useDataFetching'
+import { Alert, Box, TableCell, TableRow } from '@mui/material';
+import useDataFetching from '../../hooks/useDataFetching';
+import { ProductionReport } from '../../types/production';
+import BaseTable from '../common/BaseTable';
 
 const PRODUCTION_REPORT_DATA: ProductionReport[] = [
-  { date: '2025-08-10', shift: 'Manhã', product: 'Mash Cup Vegetables', batches: 12, totalKg: 180 },
-  { date: '2025-08-10', shift: 'Tarde', product: 'Mash Cup Cheese', batches: 10, totalKg: 150 },
-  { date: '2025-08-11', shift: 'Manhã', product: 'Mash Cup Meat', batches: 8, totalKg: 120 },
-  { date: '2025-08-11', shift: 'Tarde', product: 'Mash Cup Vegetables', batches: 15, totalKg: 225 },
+  { date: '10-08-2025', shift: 'Manhã', product: 'Doritos', batches: 12, totalKg: 180 },
+  { date: '10-08-2025', shift: 'Tarde', product: 'Fandangos', batches: 10, totalKg: 150 },
+  { date: '11-08-2025', shift: 'Manhã', product: 'Baconzitos', batches: 8, totalKg: 120 },
+  { date: '11-08-2025', shift: 'Tarde', product: 'Doritos', batches: 15, totalKg: 225 },
 ]
 
 const REPORT_COLUMNS = [
