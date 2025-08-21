@@ -1,9 +1,18 @@
 import { Box } from '@mui/material'
 import LoginBox from '../../../components/Director/LoginBox'
 
-interface Props { onLogin: () => void }
+interface AuthError {
+  message: string
+  code?: string
+}
 
-export default function LoginPage({ onLogin }: Props) {
+interface Props { 
+  onLogin: (credentials?: { username: string; password: string }) => Promise<void>
+  authError: AuthError | null
+  onClearAuthError: () => void
+}
+
+export default function LoginPage({ onLogin, authError, onClearAuthError }: Props) {
   return (
     <Box sx={{
       height: '100vh',
@@ -14,7 +23,11 @@ export default function LoginPage({ onLogin }: Props) {
         position: 'relative', zIndex: 1, height: '100%',
         display: 'flex', alignItems: 'center', justifyContent: 'center'
       }}>
-        <LoginBox onLogin={onLogin} />
+        <LoginBox 
+          onLogin={onLogin} 
+          authError={authError}
+          onClearAuthError={onClearAuthError}
+        />
       </Box>
     </Box>
   )
