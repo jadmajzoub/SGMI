@@ -1,9 +1,9 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import LoginPage from '../containers/Director/Login'
-import LoadingScreen from '../containers/Director/LoadingScreen'
-import ProductionEntryDirector from '../containers/Director/ProductionEntry'
-import ProductionEntryProduction from '../containers/Production/ProductionEntry'
-import NotFoundPage from '../containers/NotFound'
+import { Navigate, Route, Routes } from 'react-router-dom';
+import DirectorDashboard from '../containers/Director/Dashboard';
+import LoadingScreen from '../containers/Director/LoadingScreen';
+import LoginPage from '../containers/Director/Login';
+import NotFoundPage from '../containers/NotFound';
+import Entry from '../containers/Production/Entry';
 
 interface AuthError {
   message: string
@@ -33,9 +33,9 @@ export default function AppRoutes({ isAuthenticated, authError, onLogin, onClear
       <Route path="/loading" element={<LoadingScreen />} />
       <Route
         path="/director/production-entry"
-        element={isAuthenticated ? <ProductionEntryDirector /> : <Navigate to="/" replace />}
+        element={isAuthenticated ? <DirectorDashboard /> : <Navigate to="/" replace />}
       />
-      <Route path="/production/production-entry" element={<ProductionEntryProduction />} />
+      <Route path="/production/entry" element={<Entry />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   )
