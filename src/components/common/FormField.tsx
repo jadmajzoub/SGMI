@@ -5,12 +5,13 @@ interface FormFieldProps extends Omit<TextFieldProps, 'onChange'> {
   value: string | number | ''
   onChange: (value: string | number | '') => void
   hasError?: boolean
+  errorMessage?: string
   onClearError?: () => void
   onClearSuccess?: () => void
 }
 
 const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
-  ({ value, onChange, hasError, onClearError, onClearSuccess, type = 'text', ...props }, ref) => {
+  ({ value, onChange, hasError, errorMessage, onClearError, onClearSuccess, type = 'text', ...props }, ref) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const inputValue = e.target.value
       
@@ -34,6 +35,7 @@ const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
         value={value}
         onChange={handleChange}
         error={hasError}
+        helperText={errorMessage}
         fullWidth
         type={type}
         {...props}

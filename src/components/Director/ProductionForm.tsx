@@ -1,68 +1,71 @@
 import { Box, Fade, Slide } from '@mui/material'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { ProductionEntry } from '../../types/production'
 import FormContainer from '../common/FormContainer'
 import FormField from '../common/FormField'
 import SubmitButton from '../common/SubmitButton'
-import useFormState from '../../hooks/useFormState'
-
-const INITIAL_VALUES = {
-  product: '',
-  quantityKg: ''
-}
+import { productionEntryFormSchema, ProductionEntryFormData } from '../../schemas/productionValidation'
+import { useState } from 'react'
 
 const SUCCESS_MESSAGE = 'Entrada de produção salva com sucesso!'
 const LOADING_TEXT = 'Salvando entrada...'
 const SAVE_SIMULATION_DELAY_MS = 2000
 
 export default function ProductionForm() {
+  const [isLoading, setIsLoading] = useState(false)
+  const [submitError, setSubmitError] = useState<string>('')
+  const [successMessage, setSuccessMessage] = useState<string>('')
+
   const {
-    values,
-    errors,
-    successMessage,
-    isLoading,
-    setValue,
-    clearError,
-    clearSuccess,
+    control,
     handleSubmit,
-    resetForm,
-    isFormValid
-  } = useFormState({
-    initialValues: INITIAL_VALUES,
-    onSubmit: async (formValues) => {
-      const { product, quantityKg } = formValues
+    reset,
+    formState: { errors, isValid }
+  } = useForm<ProductionEntryFormData>({
+    resolver: zodResolver(productionEntryFormSchema),
+    defaultValues: {
+      product: '',
+      quantityKg: ''
+    },
+    mode: 'onChange'
+  })
 
-      if (!product.trim()) {
-        throw new Error('O nome do produto é obrigatório')
-      }
-
-      if (!quantityKg || quantityKg <= 0) {
-        throw new Error('A quantidade deve ser maior que 0')
-      }
+  const onSubmit = async (data: ProductionEntryFormData) => {
+    try {
+      setIsLoading(true)
+      setSubmitError('')
+      setSuccessMessage('')
 
       const entry: ProductionEntry = { 
-        product: product.trim(), 
-        quantityKg: Number(quantityKg) 
+        product: data.product.trim(), 
+        quantityKg: Number(data.quantityKg)
       }
       
       // Simulate API call with longer delay to showcase loading state
       await new Promise(resolve => setTimeout(resolve, SAVE_SIMULATION_DELAY_MS))
       
       console.log('Production entry saved:', entry)
-      resetForm()
-    },
-    successMessage: SUCCESS_MESSAGE
-  })
+      setSuccessMessage(SUCCESS_MESSAGE)
+      reset()
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro inesperado'
+      setSubmitError(errorMessage)
+      console.error('Form submission error:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-  const isProductValid = values.product?.trim()
-  const isQuantityValid = values.quantityKg && Number(values.quantityKg) > 0
-  const isValidForm = isProductValid && isQuantityValid
+  const clearError = () => setSubmitError('')
+  const clearSuccess = () => setSuccessMessage('')
 
   return (
     <Fade in timeout={500}>
       <Box>
         <FormContainer
           title="Entrada de Produção"
-          error={errors}
+          error={submitError ? { message: submitError } : null}
           successMessage={successMessage}
           onClearError={clearError}
           onClearSuccess={clearSuccess}
@@ -73,37 +76,55 @@ export default function ProductionForm() {
           }}
         >
           <Slide direction="right" in={!isLoading} timeout={300}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <FormField
-                label="Nome do Produto"
-                placeholder="Ex: Mash Cup Vegetables"
-                value={values.product || ''}
-                onChange={(value) => setValue('product', value)}
-                hasError={errors?.field === 'product'}
-                onClearError={clearError}
-                onClearSuccess={clearSuccess}
-                disabled={isLoading}
+            <Box 
+              component="form" 
+              onSubmit={handleSubmit(onSubmit)}
+              sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+            >
+              <Controller
+                name="product"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <FormField
+                    label="Nome do Produto"
+                    placeholder="Ex: Mash Cup Vegetables"
+                    value={field.value}
+                    onChange={field.onChange}
+                    hasError={!!fieldState.error}
+                    errorMessage={fieldState.error?.message}
+                    onClearError={clearError}
+                    onClearSuccess={clearSuccess}
+                    disabled={isLoading}
+                  />
+                )}
               />
               
-              <FormField
-                label="Quantidade (kg)"
-                type="number"
-                placeholder="Ex: 150"
-                inputProps={{ min: 0, step: 0.1 }}
-                value={values.quantityKg || ''}
-                onChange={(value) => setValue('quantityKg', value)}
-                hasError={errors?.field === 'quantity'}
-                onClearError={clearError}
-                onClearSuccess={clearSuccess}
-                disabled={isLoading}
+              <Controller
+                name="quantityKg"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <FormField
+                    label="Quantidade (kg)"
+                    type="number"
+                    placeholder="Ex: 150"
+                    inputProps={{ min: 0, step: 0.1 }}
+                    value={field.value}
+                    onChange={field.onChange}
+                    hasError={!!fieldState.error}
+                    errorMessage={fieldState.error?.message}
+                    onClearError={clearError}
+                    onClearSuccess={clearSuccess}
+                    disabled={isLoading}
+                  />
+                )}
               />
               
               <Box sx={{ mt: 1 }}>
                 <SubmitButton
+                  type="submit"
                   isLoading={isLoading}
                   loadingText={LOADING_TEXT}
-                  isFormValid={isValidForm}
-                  onClick={handleSubmit}
+                  isFormValid={isValid}
                   fullWidth
                   sx={{
                     py: 1.5,

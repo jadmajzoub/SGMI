@@ -1,12 +1,14 @@
-import { Typography, Link, Stack } from '@mui/material'
+import { Typography, Link, Stack, Box } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { delay } from '@utils/delay'
 import { DIMENSIONS } from '../../constants/theme'
 import FormContainer from '../common/FormContainer'
 import FormField from '../common/FormField'
 import SubmitButton from '../common/SubmitButton'
-import useFormState from '../../hooks/useFormState'
+import { loginFormSchema, LoginFormData } from '../../schemas/productionValidation'
 
 interface AuthError {
   message: string
@@ -19,40 +21,40 @@ interface Props {
   onClearAuthError: () => void
 }
 
-const INITIAL_VALUES = {
-  username: '',
-  password: ''
-}
-
 const LOGIN_LOADING_TEXT = 'Entrando...'
 
 export default function LoginBox({ onLogin, authError, onClearAuthError }: Props) {
   const navigate = useNavigate()
   
   const {
-    values,
-    isLoading,
-    setValue,
+    control,
     handleSubmit,
-    isFormValid
-  } = useFormState({
-    initialValues: INITIAL_VALUES,
-    onSubmit: async (formValues) => {
-      const { username, password } = formValues
-      await onLogin({ username, password })
-      await delay(DIMENSIONS.DELAY_LOGIN_MS)
-      navigate('/loading')
-    }
+    watch,
+    formState: { errors, isValid, isSubmitting }
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      username: '',
+      password: ''
+    },
+    mode: 'onChange'
   })
 
+  const watchedValues = watch()
+
   useEffect(() => {
-    if (values.username || values.password) {
+    if (watchedValues.username || watchedValues.password) {
       onClearAuthError()
     }
-  }, [values.username, values.password, onClearAuthError])
+  }, [watchedValues.username, watchedValues.password, onClearAuthError])
+
+  const onSubmit = async (data: LoginFormData) => {
+    await onLogin({ username: data.username, password: data.password })
+    await delay(DIMENSIONS.DELAY_LOGIN_MS)
+    navigate('/loading')
+  }
 
   const hasAuthError = !!authError
-  const isLoginFormValid = values.username && values.password
 
   return (
     <FormContainer
@@ -70,41 +72,61 @@ export default function LoginBox({ onLogin, authError, onClearAuthError }: Props
       <Typography variant="h6" fontWeight={700}>ENTRAR</Typography>
       <Typography variant="body2" color="text.secondary">Bem-vindo ao SGMI</Typography>
 
-      <Stack gap={1.5} mt={1}>
-        <FormField
-          size="small"
-          placeholder="Nome de usuário"
-          value={values.username || ''}
-          onChange={(value) => setValue('username', value)}
-          hasError={hasAuthError}
-          onClearError={onClearAuthError}
-          disabled={isLoading}
-        />
-        
-        <FormField
-          size="small"
-          placeholder="Senha"
-          type="password"
-          value={values.password || ''}
-          onChange={(value) => setValue('password', value)}
-          hasError={hasAuthError}
-          onClearError={onClearAuthError}
-          disabled={isLoading}
-        />
-        
-        <SubmitButton
-          isLoading={isLoading}
-          loadingText={LOGIN_LOADING_TEXT}
-          isFormValid={isLoginFormValid}
-          onClick={handleSubmit}
-        >
-          Entrar
-        </SubmitButton>
-        
-        <Link href="#" underline="hover" variant="body2">
-          Esqueceu sua senha?
-        </Link>
-      </Stack>
+      <Box 
+        component="form" 
+        onSubmit={handleSubmit(onSubmit)}
+        sx={{ mt: 1 }}
+      >
+        <Stack gap={1.5}>
+          <Controller
+            name="username"
+            control={control}
+            render={({ field, fieldState }) => (
+              <FormField
+                size="small"
+                placeholder="Nome de usuário"
+                value={field.value}
+                onChange={field.onChange}
+                hasError={hasAuthError || !!fieldState.error}
+                errorMessage={fieldState.error?.message}
+                onClearError={onClearAuthError}
+                disabled={isSubmitting}
+              />
+            )}
+          />
+          
+          <Controller
+            name="password"
+            control={control}
+            render={({ field, fieldState }) => (
+              <FormField
+                size="small"
+                placeholder="Senha"
+                type="password"
+                value={field.value}
+                onChange={field.onChange}
+                hasError={hasAuthError || !!fieldState.error}
+                errorMessage={fieldState.error?.message}
+                onClearError={onClearAuthError}
+                disabled={isSubmitting}
+              />
+            )}
+          />
+          
+          <SubmitButton
+            type="submit"
+            isLoading={isSubmitting}
+            loadingText={LOGIN_LOADING_TEXT}
+            isFormValid={isValid}
+          >
+            Entrar
+          </SubmitButton>
+          
+          <Link href="#" underline="hover" variant="body2">
+            Esqueceu sua senha?
+          </Link>
+        </Stack>
+      </Box>
     </FormContainer>
   )
 }
