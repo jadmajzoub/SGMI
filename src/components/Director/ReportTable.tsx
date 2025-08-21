@@ -1,38 +1,76 @@
-import { TableCell, TableRow } from '@mui/material'
+import { TableCell, TableRow, Alert, Box } from '@mui/material'
 import BaseTable from '../common/BaseTable'
 import { ProductionReport } from '../../types/production'
+import useDataFetching from '../../hooks/useDataFetching'
 
 const PRODUCTION_REPORT_DATA: ProductionReport[] = [
-  { date: '2025-08-10', shift: 'Morning', product: 'Mash Cup Vegetables', batches: 12, totalKg: 180 },
-  { date: '2025-08-10', shift: 'Afternoon', product: 'Mash Cup Cheese', batches: 10, totalKg: 150 },
+  { date: '2025-08-10', shift: 'Manhã', product: 'Mash Cup Vegetables', batches: 12, totalKg: 180 },
+  { date: '2025-08-10', shift: 'Tarde', product: 'Mash Cup Cheese', batches: 10, totalKg: 150 },
+  { date: '2025-08-11', shift: 'Manhã', product: 'Mash Cup Meat', batches: 8, totalKg: 120 },
+  { date: '2025-08-11', shift: 'Tarde', product: 'Mash Cup Vegetables', batches: 15, totalKg: 225 },
 ]
 
 const REPORT_COLUMNS = [
-  { key: 'date', label: 'Date' },
-  { key: 'shift', label: 'Shift' },
-  { key: 'product', label: 'Product' },
-  { key: 'batches', label: 'Number of Batches' },
+  { key: 'date', label: 'Data' },
+  { key: 'shift', label: 'Turno' },
+  { key: 'product', label: 'Produto' },
+  { key: 'batches', label: 'Número de Lotes' },
   { key: 'totalKg', label: 'Total (kg)' },
 ]
 
+// Simulate API call
+const fetchProductionReport = async (): Promise<ProductionReport[]> => {
+  // Simulate potential error (uncomment to test error state)
+  // if (Math.random() > 0.8) {
+  //   throw new Error('Erro ao carregar relatório de produção')
+  // }
+  
+  return PRODUCTION_REPORT_DATA
+}
+
 export default function ReportTable() {
+  const { data, isLoading, error, refetch } = useDataFetching({
+    fetchFn: fetchProductionReport,
+    delay: 2000 // 2 second delay to better showcase loading state
+  })
+
   const renderRow = (report: ProductionReport, index: number) => (
     <TableRow key={index}>
       <TableCell>{report.date}</TableCell>
       <TableCell>{report.shift}</TableCell>
       <TableCell>{report.product}</TableCell>
-      <TableCell>{report.batches}</TableCell>
-      <TableCell>{report.totalKg}</TableCell>
+      <TableCell align="center">{report.batches}</TableCell>
+      <TableCell align="right">{report.totalKg} kg</TableCell>
     </TableRow>
   )
 
+  if (error) {
+    return (
+      <Box sx={{ mb: 2 }}>
+        <Alert 
+          severity="error" 
+          action={
+            <button onClick={refetch} style={{ border: 'none', background: 'none', color: 'inherit', cursor: 'pointer' }}>
+              Tentar novamente
+            </button>
+          }
+        >
+          {error}
+        </Alert>
+      </Box>
+    )
+  }
+
   return (
     <BaseTable
-      title="Production Report"
+      title="Relatório de Produção"
       columns={REPORT_COLUMNS}
-      data={PRODUCTION_REPORT_DATA}
+      data={data || []}
       renderRow={renderRow}
       minWidth={{ xs: 1, md: 720 }}
+      isLoading={isLoading}
+      loadingRows={4}
+      emptyMessage="Nenhum relatório de produção encontrado"
     />
   )
 }

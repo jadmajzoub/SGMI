@@ -5,7 +5,7 @@ export interface ProductionEntry {
 
 export interface ProductionReport {
   date: string
-  shift: 'Morning' | 'Afternoon' | 'Night'
+  shift: 'Manhã' | 'Tarde' | 'Noite'
   product: string
   batches: number
   totalKg: number
