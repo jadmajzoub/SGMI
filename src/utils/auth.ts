@@ -1,4 +1,5 @@
-import { AuthToken, AuthUser } from '../types/auth'
+import { AuthToken, AuthUser, LoginCredentials } from '../types/auth'
+import { authService, BackendUser } from '../services/auth'
 
 const AUTH_TOKEN_KEY = 'sgmi_auth_token'
 const AUTH_USER_KEY = 'sgmi_auth_user'
@@ -90,26 +91,65 @@ export const authStorage = {
   }
 }
 
-const ONE_HOUR_IN_MS = 60 * 60 * 1000
+// Token expiration time (15 minutes by default as per backend)
+const FIFTEEN_MINUTES_MS = 15 * 60 * 1000
 
-export const createMockToken = (username: string): AuthToken => {
-  const currentTimeMs = Date.now()
-  const expirationTimeMs = currentTimeMs + ONE_HOUR_IN_MS
-  
-  return {
-    accessToken: `mock_access_token_${username}_${currentTimeMs}`,
-    refreshToken: `mock_refresh_token_${username}_${currentTimeMs}`,
-    expiresAt: expirationTimeMs
+// Convert backend user to frontend user format
+const convertBackendUser = (backendUser: BackendUser): AuthUser => ({
+  id: backendUser.id,
+  name: backendUser.name,
+  email: backendUser.email,
+  role: backendUser.role,
+})
+
+// Real authentication with backend
+export const authenticateWithBackend = async (credentials: LoginCredentials): Promise<{ user: AuthUser; token: AuthToken }> => {
+  try {
+    const response = await authService.login(credentials)
+    
+    const user = convertBackendUser(response.data.user)
+    const currentTime = Date.now()
+    
+    const token: AuthToken = {
+      accessToken: response.data.tokens.accessToken,
+      refreshToken: response.data.tokens.refreshToken,
+      expiresAt: currentTime + FIFTEEN_MINUTES_MS,
+    }
+
+    return { user, token }
+  } catch (error: any) {
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message)
+    } else if (error.response?.status === 401) {
+      throw new Error('Credenciais inválidas')
+    } else if (error.code === 'ECONNREFUSED') {
+      throw new Error('Não foi possível conectar com o servidor')
+    } else {
+      throw new Error('Erro na autenticação')
+    }
   }
 }
 
-export const createMockUser = (username: string): AuthUser => {
-  const isDirector = username.toLowerCase().includes('director') || 
-                   username.toLowerCase().includes('diretor')
-  
-  return {
-    id: `user_${username}_${Date.now()}`,
-    username,
-    role: isDirector ? 'director' : 'production'
+// Refresh access token using refresh token
+export const refreshAccessToken = async (refreshToken: string): Promise<string> => {
+  try {
+    const response = await authService.refreshToken(refreshToken)
+    return response.data.accessToken
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      throw new Error('Token de refresh inválido')
+    }
+    throw error
+  }
+}
+
+// Logout and clear tokens
+export const logoutFromBackend = async (refreshToken: string): Promise<void> => {
+  try {
+    await authService.logout(refreshToken)
+  } catch (error) {
+    console.error('Erro durante logout:', error)
+  } finally {
+    authStorage.clear()
   }
 }

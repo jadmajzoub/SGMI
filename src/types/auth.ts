@@ -6,8 +6,9 @@ export interface AuthToken {
 
 export interface AuthUser {
   id: string
-  username: string
-  role: 'director' | 'production'
+  name: string
+  email: string
+  role: 'OPERATOR' | 'MANAGER' | 'DIRECTOR'
 }
 
 export interface AuthState {

@@ -7,7 +7,7 @@ import ErrorFallback from './components/common/ErrorFallback'
 import LoadingOverlay from './components/common/LoadingOverlay'
 
 export default function App() {
-  const { isAuthenticated, authError, login, clearError, isLoading } = useAuth()
+  const { isAuthenticated, user, authError, login, clearError, isLoading } = useAuth()
   
   useTokenRefresh()
   
@@ -22,7 +22,8 @@ export default function App() {
     >
       <BrowserRouter>
         <AppRoutes 
-          isAuthenticated={isAuthenticated} 
+          isAuthenticated={isAuthenticated}
+          user={user}
           authError={authError}
           onLogin={login} 
           onClearAuthError={clearError}

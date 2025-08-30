@@ -1,6 +1,13 @@
 import { useCallback, useMemo, useState, useEffect } from 'react'
 import { AuthState, LoginCredentials, AuthError } from '../types/auth'
-import { authStorage, tokenStorage, userStorage, createMockToken, createMockUser } from '../utils/auth'
+import { 
+  authStorage, 
+  tokenStorage, 
+  userStorage, 
+  authenticateWithBackend, 
+  refreshAccessToken,
+  logoutFromBackend 
+} from '../utils/auth'
 
 export function useAuth() {
   const [authState, setAuthState] = useState<AuthState>({
@@ -57,17 +64,14 @@ export function useAuth() {
         throw new Error('Credenciais inválidas')
       }
       
-      await new Promise(resolve => setTimeout(resolve, 800))
+      const { user, token } = await authenticateWithBackend(credentials)
       
-      const mockUser = createMockUser(credentials.username)
-      const mockToken = createMockToken(credentials.username)
-      
-      tokenStorage.saveToken(mockToken)
-      userStorage.saveUser(mockUser)
+      tokenStorage.saveToken(token)
+      userStorage.saveUser(user)
       
       setAuthState({
-        user: mockUser,
-        token: mockToken,
+        user,
+        token,
         isAuthenticated: true,
         isLoading: false
       })
@@ -82,9 +86,15 @@ export function useAuth() {
     }
   }, [])
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     try {
-      authStorage.clear()
+      const currentToken = authState.token
+      if (currentToken?.refreshToken) {
+        await logoutFromBackend(currentToken.refreshToken)
+      } else {
+        authStorage.clear()
+      }
+      
       setAuthState({
         user: null,
         token: null,
@@ -94,8 +104,16 @@ export function useAuth() {
       setAuthError(null)
     } catch (error) {
       console.error('Logout error:', error)
+      authStorage.clear()
+      setAuthState({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        isLoading: false
+      })
+      setAuthError(null)
     }
-  }, [])
+  }, [authState.token])
 
   const clearError = useCallback(() => {
     setAuthError(null)
@@ -115,12 +133,18 @@ export function useAuth() {
         return true
       }
       
-      const newToken = createMockToken(currentUser.username)
-      tokenStorage.saveToken(newToken)
+      const newAccessToken = await refreshAccessToken(currentToken.refreshToken)
+      const updatedToken = {
+        ...currentToken,
+        accessToken: newAccessToken,
+        expiresAt: Date.now() + (15 * 60 * 1000) // 15 minutes
+      }
+      
+      tokenStorage.saveToken(updatedToken)
       
       setAuthState(prev => ({
         ...prev,
-        token: newToken
+        token: updatedToken
       }))
       
       return true
