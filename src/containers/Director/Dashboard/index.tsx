@@ -27,7 +27,19 @@ export default function ProductionEntryPage() {
       <ErrorBoundary fallback={<ErrorFallback title="Erro da Barra Lateral" description="Falha ao carregar a barra lateral de navegação." />}>
         <Sidebar activeMenuItem={activeMenuItem} onMenuItemClick={setActiveMenuItem} />
       </ErrorBoundary>
-      <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: THEME_COLORS.BACKGROUND_LIGHT, p: 2 }}>
+
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'stretch',
+          justifyContent: 'flex-start',
+          bgcolor: THEME_COLORS.BACKGROUND_LIGHT,
+          p: 2,
+          overflow: 'auto',
+        }}
+      >
         <ErrorBoundary fallback={<ErrorFallback title="Erro de Conteúdo" description="Falha ao carregar o conteúdo selecionado." />}>
           {renderContent()}
         </ErrorBoundary>
