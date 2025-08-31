@@ -29,11 +29,11 @@ export type ProductionEntryData = z.infer<typeof productionEntrySchema>
 
 // Schema para validação de formulário (string inputs que serão transformados)
 export const productionEntryFormSchema = z.object({
-  product: z
+  productId: z
     .string()
     .trim()
-    .min(1, REQUIRED_FIELD_MESSAGE)
-    .max(MAX_PRODUCT_NAME_LENGTH, MAX_PRODUCT_NAME_MESSAGE),
+    .min(1, 'Selecione um produto')
+    .uuid('Selecione um produto válido'),
   
   quantityKg: z
     .string()

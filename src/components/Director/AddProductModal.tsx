@@ -1,12 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography } from '@mui/material'
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Typography, FormControl, InputLabel, MenuItem, Select } from '@mui/material'
 import { X } from 'lucide-react'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { ProductionEntryFormData, productionEntryFormSchema } from '../../schemas/productionValidation'
 import { ProductionEntry } from '../../types/production'
 import FormField from '../common/FormField'
+import ProductDropdown from '../common/ProductDropdown'
 import SubmitButton from '../common/SubmitButton'
+import { productsService } from '../../services/products'
 
 const SAVE_SIMULATION_DELAY_MS = 1500
 const SUCCESS_MESSAGE = 'Produto adicionado com sucesso!'
@@ -29,7 +31,7 @@ export default function AddProductModal({ open, onClose, onProductAdded }: Props
   } = useForm<ProductionEntryFormData>({
     resolver: zodResolver(productionEntryFormSchema),
     defaultValues: {
-      product: '',
+      productId: '',
       quantityKg: ''
     },
     mode: 'onChange'
@@ -46,18 +48,28 @@ export default function AddProductModal({ open, onClose, onProductAdded }: Props
       setIsLoading(true)
       setSubmitError('')
 
+      // Create production plan on backend
+      const today = new Date().toISOString().split('T')[0]; // Today's date in YYYY-MM-DD format
+      await productsService.createProductionPlan({
+        productId: data.productId,
+        plannedQuantity: Number(data.quantityKg),
+        shift: 'MORNING', // Default shift - you could add a shift selector later
+        plannedDate: today
+      })
+      
+      // For backward compatibility with parent component, create ProductionEntry object
+      // Note: We would need to fetch the product name from the products list to create this
+      // For now, we'll trigger a refresh of the production totals by passing a minimal object
       const entry: ProductionEntry = { 
-        product: data.product.trim(), 
+        product: 'Nova Produção', // Placeholder - parent should refetch data
         quantityKg: Number(data.quantityKg)
       }
-      
-      await new Promise(resolve => setTimeout(resolve, SAVE_SIMULATION_DELAY_MS))
       
       onProductAdded(entry)
       reset()
       onClose()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro inesperado'
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao criar plano de produção'
       setSubmitError(errorMessage)
       console.error('Form submission error:', error)
     } finally {
@@ -100,12 +112,11 @@ export default function AddProductModal({ open, onClose, onProductAdded }: Props
           sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
         >
           <Controller
-            name="product"
+            name="productId"
             control={control}
             render={({ field, fieldState }) => (
-              <FormField
-                label="Nome do Produto"
-                placeholder="Ex: Doritos"
+              <ProductDropdown
+                label="Produto"
                 value={field.value}
                 onChange={field.onChange}
                 hasError={!!fieldState.error}

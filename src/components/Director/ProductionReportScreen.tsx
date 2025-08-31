@@ -1,55 +1,88 @@
 import {
   Box, Grid, Paper, Stack, Typography, useTheme
-} from '@mui/material'
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 import {
-  BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line, Legend,
-} from 'recharts'
-import DataTable, { DataRow } from './DataTable'
-import { THEME_COLORS } from '../../constants/theme'
-
-// ======== MOCKS DE DADOS (substitua pelos seus depois) ========
-const daily = [
-  { date: '2025-08-10', kg: 320 },
-  { date: '2025-08-11', kg: 340 },
-  { date: '2025-08-12', kg: 360 },
-  { date: '2025-08-13', kg: 350 },
-  { date: '2025-08-14', kg: 470 },
-]
-
-const productShare = [
-  { name: 'Fandangos', value: 48 },
-  { name: 'Doritos', value: 26 },
-  { name: 'Baconzitos', value: 26 },
-]
-
-const trend = [
-  { day: '10-08', kg: 320 },
-  { day: '11-08', kg: 340 },
-  { day: '12-08', kg: 360 },
-  { day: '13-08', kg: 350 },
-  { day: '14-08', kg: 470 },
-]
-
-// Tabela (no relatório)
-const tableRows: DataRow[] = [
-  { date: '10/08/2025', shift: 'Manhã', product: 'Fandangos',  batches: 12, approxKg: 240 },
-  { date: '10/08/2025', shift: 'Tarde', product: 'Doritos',    batches: 8,  approxKg: 160 },
-  { date: '11/08/2025', shift: 'Noite', product: 'Baconzitos', batches: 9,  approxKg: 180 },
-  { date: '12/08/2025', shift: 'Manhã', product: 'Fandangos',  batches: 10, approxKg: 200 },
-  { date: '12/08/2025', shift: 'Tarde', product: 'Doritos',    batches: 7,  approxKg: 140 },
-  { date: '13/08/2025', shift: 'Noite', product: 'Baconzitos', batches: 9,  approxKg: 180 },
-  { date: '14/08/2025', shift: 'Manhã', product: 'Fandangos',  batches: 15, approxKg: 300 },
-]
-
-// ======== KPIs ========
-const totalKg = daily.reduce((acc, d) => acc + d.kg, 0)
-const totalLotes = 126
-const diasProd = daily.length
-const kgPorLote = Math.round(totalKg / Math.max(totalLotes, 1))
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis, YAxis,
+} from 'recharts';
+import { THEME_COLORS } from '../../constants/theme';
+import {
+  chartService,
+  DailyProductionChart,
+  ProductionMetrics,
+  ProductShareChart,
+  TableRow,
+  TrendChart
+} from '../../services/charts';
+import { createDefaultFilter, ProductionFilter } from '../../types/filters';
+import DataTable from './DataTable';
+import ProductionFilters from './ProductionFilters';
 
 export default function ProductionReportScreen() {
   const theme = useTheme()
+  
+  // State for filters
+  const [filter, setFilter] = useState<ProductionFilter>(createDefaultFilter())
+  
+  // State for chart data
+  const [daily, setDaily] = useState<DailyProductionChart[]>([])
+  const [productShare, setProductShare] = useState<ProductShareChart[]>([])
+  const [trend, setTrend] = useState<TrendChart[]>([])
+  const [tableRows, setTableRows] = useState<TableRow[]>([])
+  const [metrics, setMetrics] = useState<ProductionMetrics>({
+    totalKg: 0,
+    totalBatches: 0,
+    minutesProduced: 0,
+    kgPerBatch: 0
+  })
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Fetch all chart data when filters change
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        setIsLoading(true)
+        
+        // Fetch all data in parallel with current filter
+        const [
+          dailyData,
+          shareData,
+          trendData,
+          tableData,
+          metricsData
+        ] = await Promise.all([
+          chartService.getDailyProduction(filter),
+          chartService.getProductShare(filter),
+          chartService.getTrend(filter),
+          chartService.getTableData(filter),
+          chartService.getMetrics(filter)
+        ])
+
+        setDaily(dailyData)
+        setProductShare(shareData)
+        setTrend(trendData)
+        setTableRows(tableData)
+        setMetrics(metricsData)
+      } catch (error) {
+        console.error('Erro ao carregar dados dos relatórios:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchAllData()
+  }, [filter])
 
   // Paleta de cores consistente
   const primary = theme.palette.primary.main
@@ -57,6 +90,10 @@ export default function ProductionReportScreen() {
   const accent = theme.palette.error?.main || '#ef4444'
   const grid = theme.palette.divider
   const PIE_COLORS = [primary, secondary, accent]
+
+  const handleFilterChange = (newFilter: ProductionFilter) => {
+    setFilter(newFilter);
+  };
 
   return (
     <Box
@@ -82,30 +119,33 @@ export default function ProductionReportScreen() {
           Relatório de Produção
         </Typography>
 
+        {/* Filtros */}
+        <ProductionFilters filter={filter} onFilterChange={handleFilterChange} />
+
         {/* KPIs */}
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6} md={3}>
             <Paper sx={{ p: 2, borderRadius: 2 }}>
               <Typography variant="body2" color="text.secondary">kg Produzidos</Typography>
-              <Typography variant="h4" fontWeight={700}>{totalKg.toLocaleString('pt-BR')}</Typography>
+              <Typography variant="h4" fontWeight={700}>{isLoading ? '...' : metrics.totalKg.toLocaleString('pt-BR')}</Typography>
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <Paper sx={{ p: 2, borderRadius: 2 }}>
-              <Typography variant="body2" color="text.secondary">Lotes Produzidos</Typography>
-              <Typography variant="h4" fontWeight={700}>{totalLotes.toLocaleString('pt-BR')}</Typography>
+              <Typography variant="body2" color="text.secondary">Bateladas Produzidas</Typography>
+              <Typography variant="h4" fontWeight={700}>{isLoading ? '...' : metrics.totalBatches.toLocaleString('pt-BR')}</Typography>
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <Paper sx={{ p: 2, borderRadius: 2 }}>
-              <Typography variant="body2" color="text.secondary">kg por Lote</Typography>
-              <Typography variant="h4" fontWeight={700}>{kgPorLote.toLocaleString('pt-BR')}</Typography>
+              <Typography variant="body2" color="text.secondary">kg por Batelada</Typography>
+              <Typography variant="h4" fontWeight={700}>{isLoading ? '...' : metrics.kgPerBatch.toLocaleString('pt-BR')}</Typography>
             </Paper>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <Paper sx={{ p: 2, borderRadius: 2 }}>
-              <Typography variant="body2" color="text.secondary">Dias de Produção</Typography>
-              <Typography variant="h4" fontWeight={700}>{diasProd}</Typography>
+              <Typography variant="body2" color="text.secondary">Tempo de Produção (em minutos)</Typography>
+              <Typography variant="h4" fontWeight={700}>{isLoading ? '...' : metrics.minutesProduced}</Typography>
             </Paper>
           </Grid>
         </Grid>

@@ -1,14 +1,14 @@
 import {
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Paper, TableSortLabel, TablePagination, Toolbar, Typography,
-  Box, FormControl, InputLabel, Select, MenuItem, TextField
-} from '@mui/material'
-import { useMemo, useState } from 'react'
-import dayjs from 'dayjs'
-import isBetween from 'dayjs/plugin/isBetween'
-import customParseFormat from 'dayjs/plugin/customParseFormat'
+  Paper,
+  Table, TableBody, TableCell, TableContainer, TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel
+} from '@mui/material';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { useMemo, useState } from 'react';
 
-dayjs.extend(isBetween)
 dayjs.extend(customParseFormat)
 
 export type DataRow = {
@@ -38,42 +38,14 @@ export default function DataTable({ rows, pageSize = 10 }: Props) {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(pageSize)
 
-  const [productFilter, setProductFilter] = useState<string>('__ALL__')
-  const [startDate, setStartDate] = useState<string>('') // YYYY-MM-DD
-  const [endDate, setEndDate] = useState<string>('')     // YYYY-MM-DD
-
   const handleSort = (property: keyof DataRow) => {
     const isAsc = orderBy === property && order === 'asc'
     setOrder(isAsc ? 'desc' : 'asc')
     setOrderBy(property)
   }
 
-  const productOptions = useMemo(() => {
-    const set = new Set<string>()
-    rows.forEach(r => set.add(r.product))
-    return Array.from(set).sort((a, b) => a.localeCompare(b))
-  }, [rows])
-
-  const filtered = useMemo(() => {
-    let base = productFilter === '__ALL__'
-      ? rows.slice()
-      : rows.filter(r => r.product === productFilter)
-
-    if (startDate || endDate) {
-      const start = startDate ? dayjs(startDate, 'YYYY-MM-DD', true).startOf('day') : null
-      const end   = endDate   ? dayjs(endDate,   'YYYY-MM-DD', true).endOf('day')   : null
-
-      base = base.filter(r => {
-        const d = parseRowDate(r.date)
-        if (!d.isValid()) return false
-        if (start && end) return d.isBetween(start, end, 'day', '[]')
-        if (start) return d.isAfter(start) || d.isSame(start, 'day')
-        if (end)   return d.isBefore(end) || d.isSame(end, 'day')
-        return true
-      })
-    }
-
-    return base.sort((a, b) => {
+  const sortedRows = useMemo(() => {
+    return rows.slice().sort((a, b) => {
       const va = a[orderBy]
       const vb = b[orderBy]
       if (orderBy === 'date') {
@@ -89,61 +61,12 @@ export default function DataTable({ rows, pageSize = 10 }: Props) {
         ? String(va).localeCompare(String(vb))
         : String(vb).localeCompare(String(va))
     })
-  }, [rows, productFilter, startDate, endDate, orderBy, order])
+  }, [rows, orderBy, order])
 
-  const pageRows = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  const pageRows = sortedRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <Toolbar sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>Registros de Produção</Typography>
-
-        {/* Filtro por produto */}
-        <FormControl size="small" sx={{ minWidth: 160 }}>
-          <InputLabel id="product-filter-label">Produto</InputLabel>
-          <Select
-            labelId="product-filter-label"
-            label="Produto"
-            value={productFilter}
-            onChange={(e) => {
-              setProductFilter(e.target.value)
-              setPage(0)
-            }}
-          >
-            <MenuItem value="__ALL__">Todos</MenuItem>
-            {productOptions.map((p) => (
-              <MenuItem key={p} value={p}>{p}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        {/* Data inicial */}
-        <TextField
-          size="small"
-          label="Data inicial"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          value={startDate}
-          onChange={(e) => {
-            setStartDate(e.target.value)
-            setPage(0)
-          }}
-        />
-
-        {/* Data final */}
-        <TextField
-          size="small"
-          label="Data final"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          value={endDate}
-          onChange={(e) => {
-            setEndDate(e.target.value)
-            setPage(0)
-          }}
-        />
-      </Toolbar>
-
       {/* Tabela */}
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader>
@@ -221,7 +144,7 @@ export default function DataTable({ rows, pageSize = 10 }: Props) {
 
       <TablePagination
         component="div"
-        count={filtered.length}
+        count={sortedRows.length}
         page={page}
         onPageChange={(_, newPage) => setPage(newPage)}
         rowsPerPage={rowsPerPage}

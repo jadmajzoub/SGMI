@@ -2,13 +2,7 @@ import { Alert, Box, TableCell, TableRow } from '@mui/material';
 import useDataFetching from '../../hooks/useDataFetching';
 import { ProductionReport } from '../../types/production';
 import BaseTable from '../common/BaseTable';
-
-const PRODUCTION_REPORT_DATA: ProductionReport[] = [
-  { date: '10-08-2025', shift: 'Manhã', product: 'Doritos', batches: 12, totalKg: 180 },
-  { date: '10-08-2025', shift: 'Tarde', product: 'Fandangos', batches: 10, totalKg: 150 },
-  { date: '11-08-2025', shift: 'Manhã', product: 'Baconzitos', batches: 8, totalKg: 120 },
-  { date: '11-08-2025', shift: 'Tarde', product: 'Doritos', batches: 15, totalKg: 225 },
-]
+import { productionService } from '../../services/production';
 
 const REPORT_COLUMNS = [
   { key: 'date', label: 'Data' },
@@ -18,19 +12,9 @@ const REPORT_COLUMNS = [
   { key: 'totalKg', label: 'Total (kg)' },
 ]
 
-// Simulate API call
-const fetchProductionReport = async (): Promise<ProductionReport[]> => {
-  // Simulate potential error (uncomment to test error state)
-  // if (Math.random() > 0.8) {
-  //   throw new Error('Erro ao carregar relatório de produção')
-  // }
-  
-  return PRODUCTION_REPORT_DATA
-}
-
 export default function ReportTable() {
   const { data, isLoading, error, refetch } = useDataFetching({
-    fetchFn: fetchProductionReport,
+    fetchFn: () => productionService.getReports(),
     delay: 2000 // 2 second delay to better showcase loading state
   })
 

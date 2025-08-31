@@ -25,7 +25,7 @@ export default function ProductionForm() {
   } = useForm<ProductionEntryFormData>({
     resolver: zodResolver(productionEntryFormSchema),
     defaultValues: {
-      product: '',
+      productId: '',
       quantityKg: ''
     },
     mode: 'onChange'
@@ -38,7 +38,7 @@ export default function ProductionForm() {
       setSuccessMessage('')
 
       const entry: ProductionEntry = { 
-        product: data.product.trim(), 
+        product: 'Produto Selecionado', // Placeholder - need product name from ID 
         quantityKg: Number(data.quantityKg)
       }
       
@@ -82,12 +82,12 @@ export default function ProductionForm() {
               sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
             >
               <Controller
-                name="product"
+                name="productId"
                 control={control}
                 render={({ field, fieldState }) => (
                   <FormField
-                    label="Nome do Produto"
-                    placeholder="Ex: Doritos"
+                    label="ID do Produto"
+                    placeholder="Ex: UUID do produto"
                     value={field.value}
                     onChange={field.onChange}
                     hasError={!!fieldState.error}

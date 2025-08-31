@@ -16,6 +16,8 @@ export interface ProductionTotal {
   totalKg: number
 }
 
+export type ProductType = 'AMANTEIGADO' | 'DOCE' | 'FLOCO'
+
 export type MenuItem = 'production-entry' | 'production-report'
 
 export interface MenuItemConfig {

@@ -2,31 +2,16 @@ import { Alert, Box, TableCell, TableRow } from '@mui/material'
 import useDataFetching from '../../hooks/useDataFetching'
 import { ProductionTotal } from '../../types/production'
 import BaseTable from '../common/BaseTable'
-
-const PRODUCTION_TOTAL_DATA: ProductionTotal[] = [
-  { product: 'Doritos', totalKg: 1230 },
-  { product: 'Fandangos', totalKg: 860 },
-  { product: 'Baconzitos', totalKg: 945 },
-]
+import { productionService } from '../../services/production'
 
 const TOTAL_COLUMNS = [
   { key: 'product', label: 'Produto' },
   { key: 'totalKg', label: 'Total (kg)' },
 ]
 
-// Simulate API call
-const fetchProductionTotals = async (): Promise<ProductionTotal[]> => {
-  // Simulate potential error (uncomment to test error state)
-  // if (Math.random() > 0.8) {
-  //   throw new Error('Erro ao carregar totais de produção')
-  // }
-  
-  return PRODUCTION_TOTAL_DATA
-}
-
 export default function TotalTable() {
   const { data, isLoading, error, refetch } = useDataFetching({
-    fetchFn: fetchProductionTotals,
+    fetchFn: () => productionService.getTotals(),
     delay: 1800 // Different delay to show async loading
   })
 
@@ -63,7 +48,7 @@ export default function TotalTable() {
       minWidth={{ xs: 1, md: 600 }}
       isLoading={isLoading}
       loadingRows={3}
-      emptyMessage="Nenhum total de produção encontrado"
+      emptyMessage="Nenhum plano cadastrado"
     />
   )
 }
