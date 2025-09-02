@@ -1,6 +1,7 @@
 import {
-  Box, Grid, Paper, Stack, Typography, useTheme
+  Box, Paper, Stack, Typography, useTheme
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { useEffect, useState } from 'react';
 import {
   Bar,
@@ -28,6 +29,7 @@ import {
 import { createDefaultFilter, ProductionFilter } from '../../types/filters';
 import DataTable from './DataTable';
 import ProductionFilters from './ProductionFilters';
+import { SkeletonReportScreen } from '../common/Skeleton';
 
 export default function ProductionReportScreen() {
   const theme = useTheme()
@@ -95,22 +97,16 @@ export default function ProductionReportScreen() {
     setFilter(newFilter);
   };
 
+  if (isLoading) {
+    return <SkeletonReportScreen />
+  }
+
   return (
     <Box
       sx={{
         width: '100%',
-        maxWidth: 1200,
-        mx: 'auto',
         px: { xs: 2, md: 3 },
-
-        /**
-         * ---- FIX DO CORTE NO TOPO ----
-         * Muitos layouts usam AppBar/Toolbar fixa ou um wrapper com overflow/position.
-         * Aqui garantimos um espaço "de segurança" grande o suficiente,
-         * independente do layout pai.
-         */
-        pt: { xs: 8, sm: 10 }, // empurra TUDO pra baixo do header fixo (56~64px+)
-        scrollPaddingTop: { xs: 64, sm: 88 }, // caso haja ancoras/scrollTo
+        pt: { xs: 2, md: 3 },
       }}
     >
       <Stack spacing={2} sx={{ pb: 3 }}>
@@ -123,38 +119,98 @@ export default function ProductionReportScreen() {
         <ProductionFilters filter={filter} onFilterChange={handleFilterChange} />
 
         {/* KPIs */}
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper sx={{ p: 2, borderRadius: 2 }}>
-              <Typography variant="body2" color="text.secondary">kg Produzidos</Typography>
-              <Typography variant="h4" fontWeight={700}>{isLoading ? '...' : metrics.totalKg.toLocaleString('pt-BR')}</Typography>
+        <Grid container spacing={3} sx={{ mb: 3, width: '100%' }}>
+          <Grid size={3}>
+            <Paper sx={{ 
+              p: 3, 
+              borderRadius: 2, 
+              textAlign: 'center', 
+              height: 140,
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              '&:hover': {
+                boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                transform: 'translateY(-1px)',
+              },
+              transition: 'all 0.2s ease-in-out'
+            }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontWeight: 500 }}>kg Produzidos</Typography>
+              <Typography variant="h4" fontWeight={700} color="primary">{isLoading ? '...' : metrics.totalKg.toLocaleString('pt-BR')}</Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper sx={{ p: 2, borderRadius: 2 }}>
-              <Typography variant="body2" color="text.secondary">Bateladas Produzidas</Typography>
-              <Typography variant="h4" fontWeight={700}>{isLoading ? '...' : metrics.totalBatches.toLocaleString('pt-BR')}</Typography>
+          <Grid size={3}>
+            <Paper sx={{ 
+              p: 3, 
+              borderRadius: 2, 
+              textAlign: 'center', 
+              height: 140,
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              '&:hover': {
+                boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                transform: 'translateY(-1px)',
+              },
+              transition: 'all 0.2s ease-in-out'
+            }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontWeight: 500 }}>Bateladas Produzidas</Typography>
+              <Typography variant="h4" fontWeight={700} color="primary">{isLoading ? '...' : metrics.totalBatches.toLocaleString('pt-BR')}</Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper sx={{ p: 2, borderRadius: 2 }}>
-              <Typography variant="body2" color="text.secondary">kg por Batelada</Typography>
-              <Typography variant="h4" fontWeight={700}>{isLoading ? '...' : metrics.kgPerBatch.toLocaleString('pt-BR')}</Typography>
+          <Grid size={3}>
+            <Paper sx={{ 
+              p: 3, 
+              borderRadius: 2, 
+              textAlign: 'center', 
+              height: 140,
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              '&:hover': {
+                boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                transform: 'translateY(-1px)',
+              },
+              transition: 'all 0.2s ease-in-out'
+            }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontWeight: 500 }}>kg por Batelada</Typography>
+              <Typography variant="h4" fontWeight={700} color="primary">{isLoading ? '...' : metrics.kgPerBatch.toLocaleString('pt-BR')}</Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Paper sx={{ p: 2, borderRadius: 2 }}>
-              <Typography variant="body2" color="text.secondary">Tempo de Produção (em minutos)</Typography>
-              <Typography variant="h4" fontWeight={700}>{isLoading ? '...' : metrics.minutesProduced}</Typography>
+          <Grid size={3}>
+            <Paper sx={{ 
+              p: 3, 
+              borderRadius: 2, 
+              textAlign: 'center', 
+              height: 140,
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center',
+              alignItems: 'center',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              '&:hover': {
+                boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+                transform: 'translateY(-1px)',
+              },
+              transition: 'all 0.2s ease-in-out'
+            }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontWeight: 500 }}>Tempo de Produção (em minutos)</Typography>
+              <Typography variant="h4" fontWeight={700} color="primary">{isLoading ? '...' : metrics.minutesProduced}</Typography>
             </Paper>
           </Grid>
         </Grid>
 
         {/* Gráficos: Barras + Pizza */}
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={8}>
-            <Paper sx={{ p: 2, borderRadius: 2 }}>
-              <Typography variant="h6" sx={{ mb: 1 }}>Produção Diária (kg)</Typography>
+        <Grid container spacing={3} sx={{ mb: 3, width: '100%' }}>
+          <Grid size={8}>
+            <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Produção Diária (kg)</Typography>
               <Box sx={{ width: '100%', height: 320 }}>
                 <ResponsiveContainer>
                   <BarChart data={daily}>
@@ -162,25 +218,47 @@ export default function ProductionReportScreen() {
                     <XAxis dataKey="date" />
                     <YAxis />
                     <Tooltip formatter={(v: number) => [`${v} kg`, 'Produção']} />
-                    <Bar dataKey="kg" fill={primary} /> {/* cor explícita */}
+                    <Bar dataKey="kg" fill={primary} />
                   </BarChart>
                 </ResponsiveContainer>
               </Box>
             </Paper>
           </Grid>
 
-          <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 2, borderRadius: 2 }}>
-              <Typography variant="h6" sx={{ mb: 1 }}>Distribuição por Produto</Typography>
+          <Grid size={4}>
+            <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+              <Typography variant="h6" sx={{ mb: 2, textAlign: 'center', fontWeight: 600 }}>Distribuição por Produto</Typography>
               <Box sx={{ width: '100%', height: 320 }}>
                 <ResponsiveContainer>
                   <PieChart>
-                    <Pie data={productShare} dataKey="value" nameKey="name" outerRadius={110} label={(e) => `${e.name}: ${e.value}%`}>
+                    <Pie 
+                      data={productShare} 
+                      dataKey="value" 
+                      nameKey="name" 
+                      outerRadius={80} 
+                      label={false}
+                      stroke="#fff"
+                      strokeWidth={2}
+                    >
                       {productShare.map((_, i) => (
                         <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(v: number) => [`${v}%`, 'Participação']} />
+                    <Tooltip 
+                      formatter={(v: number, name: string) => [`${v}%`, name]} 
+                      contentStyle={{
+                        backgroundColor: '#fff',
+                        border: '1px solid #ccc',
+                        borderRadius: '8px',
+                        fontSize: '12px'
+                      }}
+                    />
+                    <Legend 
+                      verticalAlign="bottom" 
+                      height={36}
+                      formatter={(value: string) => value.length > 12 ? `${value.substring(0, 12)}...` : value}
+                      wrapperStyle={{ fontSize: '12px', paddingTop: '10px' }}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </Box>
@@ -189,8 +267,8 @@ export default function ProductionReportScreen() {
         </Grid>
 
         {/* Tendência (linha) */}
-        <Paper sx={{ p: 2, borderRadius: 2 }}>
-          <Typography variant="h6" sx={{ mb: 1 }}>Tendência de Produção</Typography>
+        <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)', mb: 3 }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Tendência de Produção</Typography>
           <Box sx={{ width: '100%', height: 320 }}>
             <ResponsiveContainer>
               <LineChart data={trend}>
@@ -199,15 +277,15 @@ export default function ProductionReportScreen() {
                 <YAxis />
                 <Tooltip formatter={(v: number) => [`${v} kg`, 'Produção']} />
                 <Legend />
-                <Line type="monotone" dataKey="kg" stroke={secondary} strokeWidth={2} dot={false} /> {/* cor explícita */}
+                <Line type="monotone" dataKey="kg" stroke={secondary} strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </Box>
         </Paper>
 
         {/* TABELA */}
-        <Paper sx={{ p: 2, borderRadius: 2 }}>
-          <Typography variant="h6" sx={{ mb: 1 }}>Planilha de Produção</Typography>
+        <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Planilha de Produção</Typography>
           <DataTable rows={tableRows} pageSize={10} />
         </Paper>
       </Stack>

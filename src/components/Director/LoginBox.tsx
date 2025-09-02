@@ -47,7 +47,7 @@ export default function LoginBox({ onLogin, authError, onClearAuthError }: Props
   const onSubmit = async (data: LoginFormData) => {
     await onLogin({ username: data.username, password: data.password })
     await delay(DIMENSIONS.DELAY_LOGIN_MS)
-    navigate('/loading')
+    navigate('/director/production-entry')
   }
 
   const hasAuthError = !!authError

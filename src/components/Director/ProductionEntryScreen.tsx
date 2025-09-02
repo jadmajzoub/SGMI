@@ -8,6 +8,7 @@ import { THEME_COLORS } from '../../constants/theme'
 import { ProductionEntry, ProductionTotal } from '../../types/production'
 import AddProductModal from './AddProductModal'
 import { productionService } from '../../services/production'
+import { SkeletonProductionEntry } from '../common/Skeleton'
 
 export default function ProductionEntryScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -66,8 +67,12 @@ export default function ProductionEntryScreen() {
 
   const getTotalKg = () => productionTotals.reduce((sum, item) => sum + item.totalKg, 0)
 
+  if (isLoading) {
+    return <SkeletonProductionEntry />
+  }
+
   return (
-    <Box sx={{ width: '100%', maxWidth: 1200, mx: 'auto', p: { xs: 2, md: 3 }, pt: { xs: 3, md: 4 } }}>
+    <Box sx={{ width: '100%', p: { xs: 2, md: 3 }, pt: { xs: 3, md: 4 } }}>
       <Paper elevation={2} sx={{ p: { xs: 3, md: 4 }, borderRadius: 3, bgcolor: THEME_COLORS.BACKGROUND_PAPER, boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
         <Stack spacing={3}>
           {/* Header */}
@@ -120,11 +125,7 @@ export default function ProductionEntryScreen() {
               {/* Lista de produtos */}
               <Grid item xs={12} md={8}>
                 <Stack spacing={2}>
-                  {isLoading ? (
-                    <Paper elevation={0} sx={{ p: 4, textAlign: 'center', bgcolor: 'grey.50', borderRadius: 2 }}>
-                      <Typography color="text.secondary">Carregando totais de produção...</Typography>
-                    </Paper>
-                  ) : productionTotals.length === 0 ? (
+                  {productionTotals.length === 0 ? (
                     <Paper elevation={0} sx={{ p: 4, textAlign: 'center', bgcolor: 'grey.50', borderRadius: 2, border: '2px dashed', borderColor: 'grey.300' }}>
                       <Typography color="text.secondary">Nenhum plano cadastrado. Clique em "Adicionar produção".</Typography>
                     </Paper>

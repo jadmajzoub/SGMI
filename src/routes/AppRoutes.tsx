@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import DirectorDashboard from '../containers/Director/Dashboard';
-import LoadingScreen from '../containers/Director/LoadingScreen';
 import LoginPage from '../containers/Director/Login';
 import NotFoundPage from '../containers/NotFound';
 import Entry from '../containers/Production/Entry';
@@ -35,7 +34,6 @@ export default function AppRoutes({ isAuthenticated, user, authError, onLogin, o
           )
         } 
       />
-      <Route path="/loading" element={<LoadingScreen />} />
       <Route
         path="/director/production-entry"
         element={
