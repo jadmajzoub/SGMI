@@ -1,69 +1,56 @@
-# React + TypeScript + Vite
+# SGMI - Sistema de Gestão de Produção Industrial
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema web para gerenciamento de produção industrial com interface em React + TypeScript + Vite e Material-UI.
 
-Currently, two official plugins are available:
+## 🚀 Como Executar
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Pré-requisitos
+- Node.js 18+ (recomendado: versão LTS mais recente)
+- npm (incluído com Node.js)
+- Backend SGMI rodando na porta 4000 (ver `../sgmi-backend/`)
 
-## Expanding the ESLint configuration
+### Instalação
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **Instalar dependências:**
+   ```bash
+   npm install
+   ```
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. **Configurar variáveis de ambiente:**
+   ```bash
+   cp .env.example .env
+   # Editar .env se necessário (API_URL padrão: http://localhost:4000/api)
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+3. **Iniciar servidor de desenvolvimento:**
+   ```bash
+   npm run dev
+   ```
+   
+   Acesse: http://localhost:5173
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Scripts Disponíveis
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- `npm run dev` - Iniciar servidor de desenvolvimento com HMR
+- `npm run build` - Construir para produção (TypeScript + Vite)
+- `npm run preview` - Visualizar build de produção localmente
+- `npm run typecheck` - Verificação de tipos TypeScript
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Estrutura do Sistema
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Este é um sistema de produção industrial com:
+- **Autenticação baseada em roles** (Diretor, Gerente, Operador)
+- **Interface do Diretor**: Planejamento de produção, relatórios e analytics
+- **Interface de Produção**: Entrada de dados de produção e gerenciamento de lotes
+- **Atualizações em tempo real** via WebSocket
+
+### Tecnologias Utilizadas
+
+- React 18 + TypeScript
+- Material-UI v6 (interface)
+- Vite (build tool)
+- React Router v6 (roteamento)
+- Axios (requisições HTTP)
+- Date-fns/Dayjs (manipulação de datas)
+- React Hook Form + Zod (formulários e validação)
+
