@@ -27,7 +27,7 @@ Sistema web para gerenciamento de produção industrial com interface em React +
    npm run dev
    ```
    
-   Acesse: http://localhost:5173
+   Acesse: http://localhost:3000
 
 ### Scripts Disponíveis
 
