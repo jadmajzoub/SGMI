@@ -8,10 +8,20 @@ export async function sendMessageAPI(payload: SendMessagePayload): Promise<ChatM
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        // 🔴 Obrigatório para o backend aceitar (SGMI-only)
+        'x-tenant': 'sgmi',
+      },
       body: JSON.stringify(payload),
     });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    if (!res.ok) {
+      // Se o backend recusou (ex.: 403 por falta de header), informa melhor
+      const msg = `HTTP ${res.status}`;
+      throw new Error(msg);
+    }
+
     const data = (await res.json()) as { role: 'assistant'; content: string };
     return {
       id: crypto.randomUUID(),
@@ -19,13 +29,18 @@ export async function sendMessageAPI(payload: SendMessagePayload): Promise<ChatM
       content: data.content,
       createdAt: Date.now(),
     };
-  } catch {
+  } catch (err: any) {
     // Fallback mock para dev do front
+    const reason = String(err?.message || '');
+    const hint =
+      reason.includes('HTTP 403')
+        ? ' (dica: verifique se o header x-tenant: sgmi está sendo enviado)'
+        : '';
     await new Promise(r => setTimeout(r, 700));
     return {
       id: crypto.randomUUID(),
       role: 'assistant',
-      content: '⚠️ (mock) Backend ainda não está ativo. Resposta simulada.',
+      content: `⚠️ (mock) Não foi possível contatar o backend${hint}. Resposta simulada.`,
       createdAt: Date.now(),
     };
   }

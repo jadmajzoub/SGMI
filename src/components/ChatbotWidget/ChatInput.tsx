@@ -13,7 +13,8 @@ export default function ChatInput({
   onRetry?: () => void;
 }) {
   const [text, setText] = useState('');
-  const ref = useRef<HTMLDivElement | null>(null);
+  // ✅ TextField usa input de <input> ou <textarea>, não <div>
+  const ref = useRef<HTMLInputElement | HTMLTextAreaElement | null>(null);
 
   const send = useCallback(() => {
     const t = text.trim();
@@ -31,23 +32,28 @@ export default function ChatInput({
         send();
       }
     };
-    el.addEventListener('keydown', handler);
-    return () => el.removeEventListener('keydown', handler);
+    el.addEventListener('keydown', handler as any);
+    return () => el.removeEventListener('keydown', handler as any);
   }, [send]);
 
   return (
     <Box sx={{ borderTop: theme => `1px solid ${theme.palette.divider}`, p: 1.25 }}>
       <Stack spacing={1}>
         {error && (
-          <Alert severity="error" action={
-            <Button color="inherit" size="small" onClick={onRetry}>Tentar novamente</Button>
-          }>
+          <Alert
+            severity="error"
+            action={
+              <Button color="inherit" size="small" onClick={onRetry}>
+                Tentar novamente
+              </Button>
+            }
+          >
             {error}
           </Alert>
         )}
         <Stack direction="row" spacing={1.25} alignItems="flex-end">
           <TextField
-            inputRef={ref as any}
+            inputRef={ref}
             value={text}
             onChange={e => setText(e.target.value)}
             placeholder="Digite sua mensagem… (Enter envia, Shift+Enter quebra linha)"
@@ -58,7 +64,9 @@ export default function ChatInput({
             maxRows={6}
             size="small"
           />
-          <Button variant="contained" onClick={send} disabled={!!disabled}>Enviar</Button>
+          <Button variant="contained" onClick={send} disabled={!!disabled}>
+            Enviar
+          </Button>
         </Stack>
       </Stack>
     </Box>

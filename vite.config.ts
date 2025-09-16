@@ -4,5 +4,14 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
-  server: { port: 3000 }
-})
+  server: {
+    port: 3000,
+    proxy: {
+      // Tudo que começa com /api vai para o backend Express na 4000
+      '/api': {
+        target: 'http://localhost:4000',
+        changeOrigin: true,
+      },
+    },
+  },
+});

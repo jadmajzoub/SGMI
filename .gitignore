@@ -1,6 +1,17 @@
-node_modules/
+﻿node_modules/
 dist/
-.vite/
-.vscode/
-.DS_Store
+coverage/
+
+# env (se um dia usar)
 .env
+.env.*
+!.env.example
+
+# logs
+*.log
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
