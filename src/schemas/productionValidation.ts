@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
 // Constantes para mensagens de erro
 const REQUIRED_FIELD_MESSAGE = 'Este campo é obrigatório'
@@ -8,7 +8,7 @@ const MIN_QUANTITY_MESSAGE = 'A quantidade deve ser maior que 0'
 const MAX_PRODUCT_NAME_LENGTH = 100
 const MAX_PRODUCT_NAME_MESSAGE = `O nome do produto deve ter no máximo ${MAX_PRODUCT_NAME_LENGTH} caracteres`
 
-// Schema de validação para entrada de produção (dados processados)
+// Schema de validação para planejamento de produção (dados processados)
 export const productionEntrySchema = z.object({
   product: z
     .string()

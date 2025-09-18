@@ -8,7 +8,7 @@ import FormContainer from '../common/FormContainer';
 import FormField from '../common/FormField';
 import SubmitButton from '../common/SubmitButton';
 
-const SUCCESS_MESSAGE = 'Entrada de produção salva com sucesso!'
+const SUCCESS_MESSAGE = 'Planejamento de produção salva com sucesso!'
 const LOADING_TEXT = 'Salvando entrada...'
 const SAVE_SIMULATION_DELAY_MS = 2000
 
@@ -64,7 +64,7 @@ export default function ProductionForm() {
     <Fade in timeout={500}>
       <Box>
         <FormContainer
-          title="Entrada de Produção"
+          title="Planejamento de Produção"
           error={submitError ? { message: submitError } : null}
           successMessage={successMessage}
           onClearError={clearError}

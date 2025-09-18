@@ -9,7 +9,7 @@ interface Props {
 }
 
 const MENU_ITEMS: MenuItemConfig[] = [
-  { key: 'production-entry', label: 'Entrada de Produção', icon: Package },
+  { key: 'production-entry', label: 'Planejamento de Produção', icon: Package },
   { key: 'production-report', label: 'Relatório de Produção', icon: FileText },
 ]
 

@@ -7,7 +7,7 @@ import { THEME_COLORS } from '../../../constants/theme';
 export default function Entry() {
   return (
     <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: THEME_COLORS.BACKGROUND_LIGHT }}>
-      <ErrorBoundary fallback={<ErrorFallback title="Erro do Formulário de Produção" description="Falha ao carregar o formulário de entrada de produção." />}>
+      <ErrorBoundary fallback={<ErrorFallback title="Erro do Formulário de Produção" description="Falha ao carregar o formulário de planejamento de produção." />}>
         <ProductionForm />
       </ErrorBoundary>
     </Box>

@@ -1,14 +1,16 @@
 import {
-  Box, Divider, Grid, IconButton, Paper, Stack, Typography,
-  useMediaQuery, useTheme, Button,
-} from '@mui/material'
-import { Plus } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import { THEME_COLORS } from '../../constants/theme'
-import { ProductionEntry, ProductionTotal } from '../../types/production'
-import AddProductModal from './AddProductModal'
-import { productionService } from '../../services/production'
-import { SkeletonProductionEntry } from '../common/Skeleton'
+  Box,
+  Button,
+  Divider, Grid, IconButton, Paper, Stack, Typography,
+  useMediaQuery, useTheme,
+} from '@mui/material';
+import { Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { THEME_COLORS } from '../../constants/theme';
+import { productionService } from '../../services/production';
+import { ProductionEntry, ProductionTotal } from '../../types/production';
+import { SkeletonProductionEntry } from '../common/Skeleton';
+import AddProductModal from './AddProductModal';
 
 export default function ProductionEntryScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -79,7 +81,7 @@ export default function ProductionEntryScreen() {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
             <Box>
               <Typography variant="h4" sx={{ fontWeight: 700, color: THEME_COLORS.PRIMARY_BLUE, fontSize: { xs: '1.5rem', md: '2rem' } }}>
-                Entrada de Produção
+                Planejamento de Produção
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                 Atualizado em {formatDate(new Date())}
