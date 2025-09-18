@@ -53,7 +53,6 @@ export default function AddProductModal({ open, onClose, onProductAdded }: Props
       await productsService.createProductionPlan({
         productId: data.productId,
         plannedQuantity: Number(data.quantityKg),
-        shift: 'MORNING', // Default shift - you could add a shift selector later
         plannedDate: today
       })
       

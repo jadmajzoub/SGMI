@@ -14,7 +14,6 @@ export interface Product {
 export interface CreateProductionPlanData {
   productId: string;
   plannedQuantity: number;
-  shift: 'MORNING' | 'AFTERNOON' | 'NIGHT';
   plannedDate: string; // ISO date string
 }
 
@@ -48,7 +47,6 @@ export const productsService = {
       const response = await api.post('/director/production-plans', {
         product_id: data.productId,
         planned_quantity: data.plannedQuantity,
-        shift: data.shift,
         planned_date: data.plannedDate,
       });
       return response.data.data;

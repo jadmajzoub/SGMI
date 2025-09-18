@@ -25,7 +25,7 @@ export default function AppRoutes({ isAuthenticated, user, authError, onLogin, o
       <Route 
         path="/" 
         element={
-          isAuthenticated ? <Navigate to="/director/production-entry" replace /> : (
+          isAuthenticated ? <Navigate to="/director/production" replace /> : (
             <LoginPage 
               onLogin={onLogin} 
               authError={authError}
@@ -35,10 +35,10 @@ export default function AppRoutes({ isAuthenticated, user, authError, onLogin, o
         } 
       />
       <Route
-        path="/director/production-entry"
+        path="/director/production"
         element={
-          isAuthenticated && hasRole(user, ['DIRECTOR', 'MANAGER']) ? 
-            <DirectorDashboard /> : 
+          isAuthenticated && hasRole(user, ['DIRECTOR', 'MANAGER']) ?
+            <DirectorDashboard /> :
             <Navigate to="/" replace />
         }
       />

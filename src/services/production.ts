@@ -12,6 +12,7 @@ export interface ProductionReport {
   product: string;
   batches: number;
   totalKg: number;
+  duration: number;
 }
 
 export interface DateRange {
@@ -62,6 +63,34 @@ export const productionService = {
     } catch (error) {
       console.error('Failed to fetch production reports:', error);
       throw new Error('Erro ao carregar relatórios de produção');
+    }
+  },
+
+  // Get production sessions from production entries (for second tab)
+  getSessions: async (filters?: DateRange): Promise<ProductionReport[]> => {
+    try {
+      const params = new URLSearchParams();
+      if (filters?.from) params.append('from', filters.from);
+      if (filters?.to) params.append('to', filters.to);
+
+      const response = await api.get(`/production/sessions?${params}`);
+
+      // Transform the backend response to match frontend interface
+      return response.data.data.map((item: any) => {
+        console.log(item)
+        return {
+          date: item.date,
+          shift: item.shift as 'Manhã' | 'Tarde' | 'Noite',
+          product: item.product,
+          batches: Number(item.batches) || 0,
+          totalKg: Number(item.totalKg) || 0,
+          duration: item.duration
+        }
+        
+      });
+    } catch (error) {
+      console.error('Failed to fetch production sessions:', error);
+      throw new Error('Erro ao carregar sessões de produção');
     }
   },
 };

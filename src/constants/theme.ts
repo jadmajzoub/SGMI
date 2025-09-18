@@ -11,7 +11,7 @@ export const THEME_COLORS = {
 } as const
 
 export const DIMENSIONS = {
-  SIDEBAR_WIDTH: 260,
+  SIDEBAR_WIDTH: 300,
   LOGIN_BOX_WIDTH: 320,
   DELAY_LOGIN_MS: 800,
   BORDER_RADIUS_LARGE: 15,

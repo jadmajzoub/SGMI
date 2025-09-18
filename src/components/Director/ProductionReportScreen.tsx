@@ -1,5 +1,7 @@
 import {
-  Box, Paper, Stack, Typography, useTheme, Grid
+  Box,
+  Grid,
+  Paper, Stack, Typography, useTheme
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
@@ -18,17 +20,17 @@ import {
 } from 'recharts';
 import { THEME_COLORS } from '../../constants/theme';
 import {
-  chartService,
   DailyProductionChart,
   ProductionMetrics,
   ProductShareChart,
+  sessionChartService,
   TableRow,
   TrendChart
-} from '../../services/charts';
+} from '../../services/sessionCharts';
 import { createDefaultFilter, ProductionFilter } from '../../types/filters';
+import { SkeletonReportScreen } from '../common/Skeleton';
 import DataTable from './DataTable';
 import ProductionFilters from './ProductionFilters';
-import { SkeletonReportScreen } from '../common/Skeleton';
 
 export default function ProductionReportScreen() {
   const theme = useTheme()
@@ -44,7 +46,7 @@ export default function ProductionReportScreen() {
   const [metrics, setMetrics] = useState<ProductionMetrics>({
     totalKg: 0,
     totalBatches: 0,
-    minutesProduced: 0,
+    totalMinutes: 0,
     kgPerBatch: 0
   })
   const [isLoading, setIsLoading] = useState(true)
@@ -63,11 +65,11 @@ export default function ProductionReportScreen() {
           tableData,
           metricsData
         ] = await Promise.all([
-          chartService.getDailyProduction(filter),
-          chartService.getProductShare(filter),
-          chartService.getTrend(filter),
-          chartService.getTableData(filter),
-          chartService.getMetrics(filter)
+          sessionChartService.getDailyProduction(filter),
+          sessionChartService.getProductShare(filter),
+          sessionChartService.getTrend(filter),
+          sessionChartService.getTableData(filter),
+          sessionChartService.getMetrics(filter)
         ])
 
         setDaily(dailyData)
@@ -200,7 +202,7 @@ export default function ProductionReportScreen() {
               transition: 'all 0.2s ease-in-out'
             }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 1, fontWeight: 500 }}>Tempo de Produção (em minutos)</Typography>
-              <Typography variant="h4" fontWeight={700} color="primary">{isLoading ? '...' : metrics.minutesProduced}</Typography>
+              <Typography variant="h4" fontWeight={700} color="primary">{isLoading ? '...' : metrics.totalMinutes}</Typography>
             </Paper>
           </Grid>
         </Grid>
