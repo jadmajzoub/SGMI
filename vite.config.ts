@@ -9,7 +9,7 @@ export default defineConfig({
     proxy: {
       // Tudo que começa com /api vai para o backend Express na 4000
       '/api': {
-        target: 'http://localhost:4000',
+        target: 'http://localhost:80',
         changeOrigin: true,
       },
     },
