@@ -16,13 +16,12 @@ import {
   PieChart,
   ResponsiveContainer,
   Tooltip,
-  XAxis, YAxis,
+  XAxis, YAxis
 } from 'recharts';
 import { THEME_COLORS } from '../../constants/theme';
 import {
   DailyProductionChart,
   ProductionMetrics,
-  ProductShareChart,
   sessionChartService,
   TableRow,
   TrendChart
@@ -40,7 +39,7 @@ export default function ProductionReportScreen() {
   
   // State for chart data
   const [daily, setDaily] = useState<DailyProductionChart[]>([])
-  const [productShare, setProductShare] = useState<ProductShareChart[]>([])
+  const [productShare, setProductShare] = useState<any[]>([])
   const [trend, setTrend] = useState<TrendChart[]>([])
   const [tableRows, setTableRows] = useState<TableRow[]>([])
   const [metrics, setMetrics] = useState<ProductionMetrics>({
