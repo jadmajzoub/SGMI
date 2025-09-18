@@ -5,6 +5,7 @@ import ChatMessageList from './ChatMessageList';
 import ChatInput from './ChatInput';
 import { useChat } from './useChat';
 import { ChatMessage } from '../../types/chat';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function ChatPanel({
   open,
@@ -16,7 +17,7 @@ export default function ChatPanel({
   anchor?: 'left' | 'right';
 }) {
   const welcome: ChatMessage = {
-    id: crypto.randomUUID(),
+    id: uuidv4(),
     role: 'assistant',
     content: 'Olá! Sou seu assistente. Como posso ajudar?',
     createdAt: Date.now(),

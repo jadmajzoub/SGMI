@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatMessage } from '../../types/chat';
 import { sendMessageAPI } from '../../services/chatApi';
+import { v4 as uuidv4 } from 'uuid';
 
 export function useChat(initialMessages: ChatMessage[] = []) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
@@ -22,13 +23,13 @@ export function useChat(initialMessages: ChatMessage[] = []) {
     setIsSending(true);
 
     const userMsg: ChatMessage = {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       role: 'user',
       content: value,
       createdAt: Date.now(),
     };
     const pending: ChatMessage = {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       role: 'assistant',
       content: 'digitando…',
       createdAt: Date.now(),

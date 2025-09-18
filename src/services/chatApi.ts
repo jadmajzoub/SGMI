@@ -1,4 +1,5 @@
 import { ChatMessage } from '../types/chat';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface SendMessagePayload {
   messages: Pick<ChatMessage, 'role' | 'content'>[];
@@ -24,7 +25,7 @@ export async function sendMessageAPI(payload: SendMessagePayload): Promise<ChatM
 
     const data = (await res.json()) as { role: 'assistant'; content: string };
     return {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       role: 'assistant',
       content: data.content,
       createdAt: Date.now(),
@@ -38,7 +39,7 @@ export async function sendMessageAPI(payload: SendMessagePayload): Promise<ChatM
         : '';
     await new Promise(r => setTimeout(r, 700));
     return {
-      id: crypto.randomUUID(),
+      id: uuidv4(),
       role: 'assistant',
       content: `⚠️ (mock) Não foi possível contatar o backend${hint}. Resposta simulada.`,
       createdAt: Date.now(),
