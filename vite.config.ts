@@ -37,7 +37,12 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 3000,
     strictPort: true,
-    ...(hostname && { allowedHosts: [hostname] })
+    // Allow any EC2 hostname pattern to handle IP changes
+    allowedHosts: [
+      'localhost',
+      '.compute-1.amazonaws.com',
+      ...(hostname ? [hostname] : [])
+    ]
   },
   server: {
     port: 3000,
