@@ -1,5 +1,4 @@
-import { Box, Paper, Stack, Typography, Skeleton as MuiSkeleton } from '@mui/material'
-import Grid from '@mui/material/Grid2'
+import { Box, Paper, Stack, Typography, Skeleton as MuiSkeleton, Grid } from '@mui/material'
 
 interface SkeletonCardProps {
   height?: number
@@ -19,7 +18,7 @@ export function SkeletonMetricsCards() {
   return (
     <Grid container spacing={2}>
       {[1, 2, 3, 4].map((i) => (
-        <Grid xs={12} sm={6} md={3} key={i}>
+        <Grid item xs={12} sm={6} md={3} key={i}>
           <SkeletonCard />
         </Grid>
       ))}
@@ -88,10 +87,10 @@ export function SkeletonReportScreen() {
         <SkeletonMetricsCards />
         
         <Grid container spacing={2}>
-          <Grid xs={12} md={8}>
+          <Grid item xs={12} md={8}>
             <SkeletonChart />
           </Grid>
-          <Grid xs={12} md={4}>
+          <Grid item xs={12} md={4}>
             <SkeletonChart />
           </Grid>
         </Grid>
@@ -121,10 +120,10 @@ export function SkeletonProductionEntry() {
           <Box>
             <MuiSkeleton variant="text" width={250} height={32} sx={{ mb: 3 }} />
             <Grid container spacing={3}>
-              <Grid xs={12} md={4}>
+              <Grid item xs={12} md={4}>
                 <SkeletonCard height={140} />
               </Grid>
-              <Grid xs={12} md={8}>
+              <Grid item xs={12} md={8}>
                 <SkeletonProductList />
               </Grid>
             </Grid>

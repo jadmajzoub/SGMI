@@ -1,7 +1,6 @@
 import {
-  Box, Paper, Stack, Typography, useTheme
+  Box, Paper, Stack, Typography, useTheme, Grid
 } from '@mui/material';
-import Grid from '@mui/material/Grid2';
 import { useEffect, useState } from 'react';
 import {
   Bar,
@@ -120,7 +119,7 @@ export default function ProductionReportScreen() {
 
         {/* KPIs */}
         <Grid container spacing={3} sx={{ mb: 3, width: '100%' }}>
-          <Grid size={3}>
+          <Grid item xs={3}>
             <Paper sx={{ 
               p: 3, 
               borderRadius: 2, 
@@ -141,7 +140,7 @@ export default function ProductionReportScreen() {
               <Typography variant="h4" fontWeight={700} color="primary">{isLoading ? '...' : metrics.totalKg.toLocaleString('pt-BR')}</Typography>
             </Paper>
           </Grid>
-          <Grid size={3}>
+          <Grid item xs={3}>
             <Paper sx={{ 
               p: 3, 
               borderRadius: 2, 
@@ -162,7 +161,7 @@ export default function ProductionReportScreen() {
               <Typography variant="h4" fontWeight={700} color="primary">{isLoading ? '...' : metrics.totalBatches.toLocaleString('pt-BR')}</Typography>
             </Paper>
           </Grid>
-          <Grid size={3}>
+          <Grid item xs={3}>
             <Paper sx={{ 
               p: 3, 
               borderRadius: 2, 
@@ -183,7 +182,7 @@ export default function ProductionReportScreen() {
               <Typography variant="h4" fontWeight={700} color="primary">{isLoading ? '...' : metrics.kgPerBatch.toLocaleString('pt-BR')}</Typography>
             </Paper>
           </Grid>
-          <Grid size={3}>
+          <Grid item xs={3}>
             <Paper sx={{ 
               p: 3, 
               borderRadius: 2, 
@@ -208,7 +207,7 @@ export default function ProductionReportScreen() {
 
         {/* Gráficos: Barras + Pizza */}
         <Grid container spacing={3} sx={{ mb: 3, width: '100%' }}>
-          <Grid size={8}>
+          <Grid item xs={8}>
             <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
               <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>Produção Diária (kg)</Typography>
               <Box sx={{ width: '100%', height: 320 }}>
@@ -225,7 +224,7 @@ export default function ProductionReportScreen() {
             </Paper>
           </Grid>
 
-          <Grid size={4}>
+          <Grid item xs={4}>
             <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
               <Typography variant="h6" sx={{ mb: 2, textAlign: 'center', fontWeight: 600 }}>Distribuição por Produto</Typography>
               <Box sx={{ width: '100%', height: 320 }}>
